@@ -1,11 +1,11 @@
-// GeauxCards methods, with details to follow
+// some methods, more details to follow
 
 #include "account.h"
 #include "geaux.h"
 
-const double START_UP_FEE = 1.00; // Fee for building GeauxCard
+const double START_UP_FEE = 0.20; // fee for building bag
 
-const double INCREMENT_FEE = 0.25; // Fee for adding funds to existing GeauxCard
+const double INCREMENT_FEE = 0.2; // Fee for adding tickets to existing bag
 
 double GeauxCard::outstandingFunds = 0.0; // construction of static data member
 
@@ -18,7 +18,7 @@ int GeauxCard::cash(double amount)
         balance -= amount;
         return 1;
     } // endif
-} // end Cash
+} // end Tickets
 
 // overloading operator +=
 void GeauxCard::operator += (double amount)
@@ -33,13 +33,13 @@ void GeauxCard::operator += (double amount)
     // see if parameter is enough to cover fee
     if (temp >= 0)
     {
-        // decrement outstandingFunds by card's old balance
+        // decrement outstandingFunds by bag's old balance
         outstandingFunds -= balance;
         balance = temp;
-        // increment outstandingFunds by card's new balance
+        // increment outstandingFunds by bag's new balance
         outstandingFunds += balance;
     }
-    else { // amount added to card cannot cover fee
+    else { // amount added to bag cannot cover fee
     } // endif
     return;
 }
@@ -47,10 +47,10 @@ void GeauxCard::operator += (double amount)
 // update receiving object's balance and update outstanding funds
 void GeauxCard::operator= (const GeauxCard& rhs)
 {
-    // decrement outstandingFunds by card's old balance
+    // decrement outstandingFunds by bag's old balance
     outstandingFunds -= balance;
     balance = rhs.balance;
-    // increment outstandingFund's by card's new balance
+    // increment outstandingFund's by bag's new balance
     outstandingFunds += balance;
     return;
 }
@@ -75,13 +75,13 @@ double GeauxCard::incrementFee(void)
     return INCREMENT_FEE;
 }
 
-// conversion operator to convert from a GeauxCard to an Account
+// conversion operator to convert from a Bag to an Account
 GeauxCard::operator Account(void) {
     // construct an account with opening balance equal to card's cash value
     return Account(balance);
 }
 
-// constructor to convert from account to GeauxCard
+// constructor to convert from account to Bag
 GeauxCard::GeauxCard(Account anExistingAccount):
     balance(anExistingAccount.retrieveBalance() - START_UP_FEE)
 {
@@ -93,7 +93,7 @@ GeauxCard::GeauxCard(Account anExistingAccount):
 GeauxCard::GeauxCard(double purchaseAmount):
     balance(purchaseAmount - START_UP_FEE)
 {
-    // increment outstandingFunds by card's balance
+    // increment outstandingFunds by tickets's balance
     outstandingFunds += balance;
     return;
 }
@@ -114,7 +114,7 @@ GeauxCard::GeauxCard(void):balance(0.0)
 
 // destructor
 GeauxCard::~GeauxCard(void) {
-    // destroying card means funds no longer exist
+    // destroying bag means funds no longer exist
     outstandingFunds -= balance;
     return;
 }
